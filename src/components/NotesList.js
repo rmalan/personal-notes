@@ -8,14 +8,14 @@ function NotesList({ notes }) {
       <div className="notes-list">
         {
           notes.map((note) => (
-            <NoteItem {...note} date={showFormattedDate(note.createdAt)} />
+            <NoteItem key={note.id} {...note} date={showFormattedDate(note.createdAt)} />
           ))
         }
       </div>
     );
   } else {
     return (
-      <p class="notes-list__empty-message">Tidak ada catatan</p>
+      <p className="notes-list__empty-message">Tidak ada catatan</p>
     );
   }
 }

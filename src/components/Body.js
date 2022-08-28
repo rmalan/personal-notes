@@ -1,16 +1,11 @@
 import React from "react";
 import NoteInput from "./NoteInput";
 import NotesList from "./NotesList";
-import { getInitialData } from "../utils/index";
 
-function Body() {
-  const notes = getInitialData();
-  const activeNotes = notes.filter((note) => note.archived === false);
-  const archived = notes.filter((note) => note.archived === true);
-
+function Body({ addNote, activeNotes, archived }) {
   return (
     <div className="note-app__body">
-      <NoteInput />
+      <NoteInput addNote={addNote} />
       <h2>Catatan Aktif</h2>
       <NotesList notes={activeNotes} />
       <h2>Arsip</h2>
