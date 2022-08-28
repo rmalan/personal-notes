@@ -16,6 +16,8 @@ class NotesApp extends React.Component {
 
     this.onAddNoteEventHandler = this.onAddNoteEventHandler.bind(this);
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
+    this.onArchiveHandler = this.onArchiveHandler.bind(this);
+    this.onActiveHandler = this.onActiveHandler.bind(this);
   }
 
   onAddNoteEventHandler({ title, body }) {
@@ -36,17 +38,49 @@ class NotesApp extends React.Component {
   }
 
   onDeleteHandler(id) {
-    const activeNotes = this.state.activeNotes.filter((note) => note.archived === false && note.id !== id);
-    const archived = this.state.archived.filter((note) => note.archived === true && note.id !== id);
+    const activeNotes = this.state.activeNotes.filter((note) => note.id !== id);
+    const archived = this.state.archived.filter((note) => note.id !== id);
 
     this.setState({ activeNotes, archived });
+  }
+
+  onArchiveHandler(id) {
+    const notes = this.state.activeNotes.map((note) => note.id === id ? { ...note, archived: true } : note);
+    const activeNotes = notes.filter((note) => note.archived === false);
+    const archiveNotes = notes.filter((note) => note.archived === true);
+
+    this.setState((prevState) => {
+      return {
+        activeNotes: activeNotes,
+        archived: [
+          ...prevState.archived,
+          archiveNotes[0]
+        ]
+      }
+    });
+  }
+
+  onActiveHandler(id) {
+    const notes = this.state.archived.map((note) => note.id === id ? { ...note, archived: false } : note);
+    const activeNotes = notes.filter((note) => note.archived === false);
+    const archiveNotes = notes.filter((note) => note.archived === true);
+
+    this.setState((prevState) => {
+      return {
+        activeNotes: [
+          ...prevState.activeNotes,
+          activeNotes[0]
+        ],
+        archived: archiveNotes
+      }
+    });
   }
 
   render() {
     return (
       <>
         <Header />
-        <Body addNote={this.onAddNoteEventHandler} activeNotes={this.state.activeNotes} archived={this.state.archived} onDelete={this.onDeleteHandler} />
+        <Body addNote={this.onAddNoteEventHandler} activeNotes={this.state.activeNotes} archived={this.state.archived} onDelete={this.onDeleteHandler} onArchive={this.onArchiveHandler} onActive={this.onActiveHandler} />
       </>
     );
   }
