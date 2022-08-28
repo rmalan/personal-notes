@@ -10,21 +10,24 @@ class NotesApp extends React.Component {
     const notes = getInitialData();
 
     this.state = {
-      activeNotes: notes.filter((note) => note.archived === false),
-      archived: notes.filter((note) => note.archived === true),
+      notes: notes,
+      querySearch: '',
     }
 
     this.onAddNoteEventHandler = this.onAddNoteEventHandler.bind(this);
+
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
     this.onArchiveHandler = this.onArchiveHandler.bind(this);
     this.onActiveHandler = this.onActiveHandler.bind(this);
+
+    this.onSearchEventHandler = this.onSearchEventHandler.bind(this);
   }
 
   onAddNoteEventHandler({ title, body }) {
     this.setState((prevState) => {
       return {
-        activeNotes: [
-          ...prevState.activeNotes,
+        notes: [
+          ...prevState.notes,
           {
             id: +new Date(),
             title,
@@ -38,49 +41,28 @@ class NotesApp extends React.Component {
   }
 
   onDeleteHandler(id) {
-    const activeNotes = this.state.activeNotes.filter((note) => note.id !== id);
-    const archived = this.state.archived.filter((note) => note.id !== id);
-
-    this.setState({ activeNotes, archived });
+    this.setState({ notes: this.state.notes.filter((note) => note.id !== id) });
   }
 
   onArchiveHandler(id) {
-    const notes = this.state.activeNotes.map((note) => note.id === id ? { ...note, archived: true } : note);
-    const activeNotes = notes.filter((note) => note.archived === false);
-    const archiveNotes = notes.filter((note) => note.archived === true);
-
-    this.setState((prevState) => {
-      return {
-        activeNotes: activeNotes,
-        archived: [
-          ...prevState.archived,
-          archiveNotes[0]
-        ]
-      }
-    });
+    this.setState({ notes: this.state.notes.map((note) => note.id === id ? { ...note, archived: true } : note) });
   }
 
   onActiveHandler(id) {
-    const notes = this.state.archived.map((note) => note.id === id ? { ...note, archived: false } : note);
-    const activeNotes = notes.filter((note) => note.archived === false);
-    const archiveNotes = notes.filter((note) => note.archived === true);
+    this.setState({ notes: this.state.notes.map((note) => note.id === id ? { ...note, archived: false } : note) });
+  }
 
-    this.setState((prevState) => {
-      return {
-        activeNotes: [
-          ...prevState.activeNotes,
-          activeNotes[0]
-        ],
-        archived: archiveNotes
-      }
+  onSearchEventHandler({ query }) {
+    this.setState(() => {
+      return { querySearch: query }
     });
   }
 
   render() {
     return (
       <>
-        <Header />
-        <Body addNote={this.onAddNoteEventHandler} activeNotes={this.state.activeNotes} archived={this.state.archived} onDelete={this.onDeleteHandler} onArchive={this.onArchiveHandler} onActive={this.onActiveHandler} />
+        <Header searchNote={this.onSearchEventHandler} />
+        <Body addNote={this.onAddNoteEventHandler} notes={this.state.notes} querySearch={this.state.querySearch} onDelete={this.onDeleteHandler} onArchive={this.onArchiveHandler} onActive={this.onActiveHandler} />
       </>
     );
   }
