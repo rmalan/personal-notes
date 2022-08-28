@@ -2,13 +2,13 @@ import React from "react";
 import NoteItem from "./NoteItem";
 import { showFormattedDate } from "../utils/index";
 
-function NotesList({ notes }) {
+function NotesList({ notes, onDelete }) {
   if (notes.length !== 0) {
     return (
       <div className="notes-list">
         {
           notes.map((note) => (
-            <NoteItem key={note.id} {...note} date={showFormattedDate(note.createdAt)} />
+            <NoteItem key={note.id} {...note} date={showFormattedDate(note.createdAt)} onDelete={onDelete} />
           ))
         }
       </div>
